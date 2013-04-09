@@ -1,7 +1,14 @@
-# Django settings for project project.
+#### Chat-specific settings
+CHAT_REFRESH_RATE = 2 #number of seconds between polls
+CHAT_HISTORY_LIMIT = 100 #number of messages to retrieve on initial load
+###
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+
+
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),

@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from django.core.serializers import serialize
+from django.conf import settings
 
 class ChatForm(forms.ModelForm):
     content = forms.CharField(max_length=256, label='',
@@ -51,10 +52,11 @@ class ChatRoom(ListView):
         - get the last X messages from this room
         - get the last messages from the room newer than Y
         """
+        limit = getattr(settings, 'CHAT_HISTORY_LIMIT', 100)
+        
         room = get_object_or_404(Room, name=self.kwargs.get('room'))
         qs = Message.get_for_room(room)
 
-        limit = int(self.request.GET.get('limit', 100)) #hard-coded default. should be in settings.
         since = int(self.request.GET.get('since', 0))
         if since:
             qs = qs.filter(pk__gt=since) #relying on primary keys being in order.
@@ -66,6 +68,7 @@ class ChatRoom(ListView):
         context['object_list'] = context['object_list'][::-1] #reverse these at the last minute
         context['room'] = get_object_or_404(Room, name=self.kwargs.get('room'))
         context['form'] = ChatForm()
+        context['poll_delay'] = getattr(settings, 'CHAT_REFRESH_RATE', 2)
         return context
 
     def get_template_names(self):

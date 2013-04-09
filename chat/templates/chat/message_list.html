@@ -10,7 +10,7 @@
 </ul>
 
 <div id='footer'>
-<form action="{% url 'create_message' room=room.name %}" method="post">
+<form action="{% url 'create_message' room=room.name %}" method="post" id='create_message'>
 {% csrf_token %}
 {{form}}
 <input type='submit' value='CHAT'>
@@ -48,7 +48,7 @@ var parse_response = function(what){
  * and fires it off.
  */
 var update_chat = function(){
-	setTimeout(update_chat, 5000); // do this first so any errors don't prevent it from happening.
+	setTimeout(update_chat, {{poll_delay}}*1000); // do this first so any errors don't prevent it from happening.
 	var last_message = $('#chatlog > .message').last();
 	var id = last_message.data('id'); // get the id of the last message to use in the request
 	var url = "{% url 'chatroom' room=room.name %}";
@@ -56,8 +56,39 @@ var update_chat = function(){
 }
 
 /**
- * Actually bind the update_chat() method to start when the DOM is ready.
+ * Handle clearing the chat input form.
+ */
+var clear_form = function(){
+	$('#create_message').each(function(){this.reset();});
+}
+
+/**
+ * Handle posting new messages via ajax.
+ */
+var post_message = function(event){
+	event.preventDefault();
+	var form = $(this);
+
+	$.ajax({url : form.attr('action'),
+			type : form.attr('method'),
+			data : form.serialize()
+		}).done(clear_form);
+}
+
+/**
+ * Bind event handlers for the poller and for the chat message submit.
  */
  $(document).ready( update_chat );
+ $('#create_message').submit( post_message );
+ 
+
+
+/**
+ * Also, focus on the chat input box on page load.
+ */
+ $(document).ready(function(){
+	 $('#id_content').focus();
+ });
+ 
 </script>
 {% endblock %}
