@@ -72,7 +72,8 @@ var post_message = function(event){
 	$.ajax({url : form.attr('action'),
 			type : form.attr('method'),
 			data : form.serialize()
-		}).done(clear_form);
+		});
+	clear_form();
 }
 
 /**
