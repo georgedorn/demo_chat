@@ -1,0 +1,4 @@
+{%comment%} Similar to message_list.html, but just the fragments of html for chat messages. {% endcomment %}
+{% for obj in object_list %}
+	{% include 'chat/message.html' %}
+{% endfor %}

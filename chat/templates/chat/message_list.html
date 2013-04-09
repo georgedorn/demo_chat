@@ -1,0 +1,63 @@
+{% extends 'chat/base.html' %}
+{% block content %}
+<div id='header'>
+<h1>{{room.name}}</h1>
+</div>
+<ul id="chatlog">
+{% for obj in object_list %}
+	{% include 'chat/message.html' %}
+{% endfor %}
+</ul>
+
+<div id='footer'>
+<form action="{% url 'create_message' room=room.name %}" method="post">
+{% csrf_token %}
+{{form}}
+<input type='submit' value='CHAT'>
+</form>
+{% endblock %}
+</div>
+{% block script %}
+<script type='text/javascript'>
+/**
+ * This script handles live-updating of the chat log.
+ * The approach is fairly dumb, merely asking the server for
+ * new messages every 5 seconds and adding them to the chatlog as needed.
+ * 
+ * There's an extremely slim chance that if many people enter messages simultaneously
+ * and the db is clever (or not clever?) about primary keys,
+ * messages could appear out of order and/or get lost according to some users' perspectives.
+ * On sqlite this is probably impossible since it's single-user-at-a-time.
+ *
+ * @todo: Refactor this into a separate file (also for minification).
+ */
+
+
+/**
+ * Takes the results of an ajax request and appends it to the chatlog.
+ */
+var parse_response = function(what){
+	what = jQuery.trim(what);
+	if(what.length){
+		$('#chatlog').append(what);
+	}
+}
+
+/**
+ * Figures out the the last message, builds an ajax request
+ * and fires it off.
+ */
+var update_chat = function(){
+	setTimeout(update_chat, 5000); // do this first so any errors don't prevent it from happening.
+	var last_message = $('#chatlog > .message').last();
+	var id = last_message.data('id'); // get the id of the last message to use in the request
+	var url = "{% url 'chatroom' room=room.name %}";
+	$.ajax(url, {data: {since:id}}).done(parse_response);
+}
+
+/**
+ * Actually bind the update_chat() method to start when the DOM is ready.
+ */
+ $(document).ready( update_chat );
+</script>
+{% endblock %}

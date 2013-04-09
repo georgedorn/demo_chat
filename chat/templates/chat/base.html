@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <title>{% block title %}The Demo Chat Site{% endblock %}</title>
+</head>
+<body>
+<!-- BEGIN MAIN BODY -->
+<div class="container wide">
+    {% block content %}{% endblock %}
+</div> 
+<!-- END MAIN BODY -->
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+{% block script %}{% endblock %}    
+<!--  begin common footer (to allow logging out -->
+        {% if request.user.is_authenticated %}
+          Hello, {{request.user}}. <a href='{% url 'logout' %}'>Logout</a>
+        {% endif %}
+<!-- end common footer -->
+
+</body>
+</html>

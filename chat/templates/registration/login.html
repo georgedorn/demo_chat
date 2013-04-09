@@ -1,0 +1,19 @@
+{% extends 'chat/base.html' %}
+{% block content %}
+<form method='POST'>
+{% csrf_token %}
+{{form}}
+<input type='submit' value='login'>
+</form>
+<br>
+<br>
+Hint:  You can add users in the <a href="/admin">admin</a> panel (admin/admin username/pass).
+<br>
+
+Or use one of the demo users:
+<ul>
+<li>demo1/demo1</li>
+<li>demo2/demo2</li>
+<li>etc...</li>
+</ul>
+{% endblock %}

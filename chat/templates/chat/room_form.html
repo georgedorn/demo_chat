@@ -1,0 +1,20 @@
+{% extends 'chat/base.html' %}
+{% block content %}
+<div>
+<h1>Create a new chat room</h1>
+<form method='POST'>
+{% csrf_token %}
+{{ form }}
+<input type='submit'>
+</form>
+</div>
+
+<div>
+<h1>Join an existing chat room</h1>
+<ul>
+{% for obj in object_list %}
+<li><a href='{{obj.get_absolute_url}}'>{{obj.name}}</a> (created by {{obj.creator.username}})</li>
+{% endfor %}
+</ul>
+</div>
+{% endblock %}
